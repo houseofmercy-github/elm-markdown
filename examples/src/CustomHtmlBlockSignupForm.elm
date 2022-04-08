@@ -60,7 +60,31 @@ renderer =
     { elmUiRenderer
         | html =
             Markdown.Html.oneOf
-                [ Markdown.Html.tag "bio"
+                [ {-
+                     The function returned by the oneOf / foldl / resultOr logic in Markdown/Html.elm
+                     https://github.com/dillonkearns/elm-markdown/blob/master/src/Markdown/Html.elm#L78
+                     https://github.com/dillonkearns/elm-markdown/blob/master/src/Markdown/Html.elm#L132
+
+                     evaluates all the items in the list and renders the last Ok so we need to put the
+                     "catch-all" handler at the front of the list if it is to have the semantics we want.
+                  -}
+                  let
+                    red =
+                        Element.rgb 0xAA 0 0
+
+                    colorText color text _ =
+                        Element.el
+                            [ Font.bold
+                            , Font.size 30
+                            , Font.color color
+                            ]
+                            (Element.text text)
+                  in
+                  Markdown.Html.oktag (colorText red "tag error")
+
+                , {- other handlers -}
+
+                    Markdown.Html.tag "bio"
                     (\name photoUrl twitter github dribbble renderedChildren ->
                         bioView renderedChildren name photoUrl twitter github dribbble
                     )

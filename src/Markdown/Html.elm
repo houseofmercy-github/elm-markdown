@@ -2,6 +2,7 @@ module Markdown.Html exposing
     ( Renderer
     , tag, withAttribute, withOptionalAttribute
     , map, oneOf
+    , errtag, oktag
     )
 
 {-|
@@ -185,6 +186,28 @@ tag expectedTag a =
             else
                 Err ("Expected " ++ expectedTag ++ " but was " ++ tagName)
         )
+
+
+{-| For testing HTML handling - always returns Ok
+
+    Markdown.Html.oktag
+
+-}
+oktag : view -> Renderer view
+oktag a =
+    Markdown.HtmlRenderer.HtmlRenderer
+        (\tagName attributes children -> Ok a)
+
+
+{-| For testing HTML handling - always returns Err
+
+    Markdown.Html.errtag
+
+-}
+errtag : String -> view -> Renderer view
+errtag msg a =
+    Markdown.HtmlRenderer.HtmlRenderer
+        (\tagName attributes children -> Err msg)
 
 
 {-| Expects an attribute. The `Renderer` will fail if that attribute doesn't
